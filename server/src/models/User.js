@@ -1,0 +1,11 @@
+import mongoose from 'mongoose';
+
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true, maxlength: 48 },
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true, maxlength: 254 },
+  passwordHash: { type: String, required: true, select: false },
+  course: { type: String, trim: true, maxlength: 64, default: '' },
+  shareQuizScores: { type: Boolean, default: false }
+}, { timestamps: true });
+
+export const User = mongoose.model('User', userSchema);

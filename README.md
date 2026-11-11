@@ -1,26 +1,31 @@
 # StudyHub
 
-StudyHub is a student workspace for keeping everyday study work together. The site opens directly into a working dashboard, with no build step or account setup.
+StudyHub is a full-stack student workspace built with React, Express, MongoDB, and Socket.IO. Accounts keep each person's tasks, notes, classmates, quiz history, and focus sessions in MongoDB. Signed-in devices receive live workspace updates over Socket.IO.
 
-## What you can do
+## Features
 
-- Create, edit, complete, filter, and remove study tasks with due dates and priorities.
-- Write and organize notes with autosave and simple heading, bold, and list formatting.
-- Run a 25-minute focus timer and track completed sessions.
-- Take a short interactive study-skills quiz and keep a personal score history.
-- Search a class directory, add classmates, sort by name or CGPA, and remove entries.
-- View progress, recent notes, upcoming tasks, and a weekly activity chart on the dashboard.
-- Change the profile and theme, and export a JSON backup of workspace data.
+- Sign up and sign in with hashed passwords and short-lived bearer tokens.
+- Create, update, complete, filter, and delete personal study tasks.
+- Write autosaving notes with simple formatting and live updates across devices.
+- Take a quiz graded by the server; quiz scores are shared on the class leaderboard only when a user opts in.
+- Keep a private classmate directory, calculate course CGPA averages, and track study progress.
+- Run a focus timer, view weekly activity, search the workspace, switch themes, and export account data.
 
-## Open or publish
+## Run locally
 
-Open `index.html` in a modern browser to use the app. It uses plain HTML, CSS, and JavaScript, with no installation required. GitHub Actions publishes the repository to GitHub Pages after changes reach the `main` branch.
+Requires Node.js 22 or later and a MongoDB connection.
 
-The app saves data in the browser's local storage. It works as a personal workspace on that device, and changes are shared between tabs in the same browser. It does not currently provide sign-in, cloud backup, or collaboration between different people or devices. The class directory starts with fictional sample entries that can be removed or replaced.
+1. From the project folder, run `npm install`.
+2. In the `server` folder, run `npm install`, then copy `.env.example` to `.env` and set `MONGODB_URI` and a random `JWT_SECRET` of at least 32 characters.
+3. In the `client` folder, run `npm install`.
+4. Return to the project folder and run `npm run dev`. The React app opens at `http://localhost:5173` and the API runs at `http://localhost:4000`.
 
-## Files
+## Deploy the full app
 
-- `index.html` — StudyHub workspace interface
-- `styles.css` — responsive light and dark themes
-- `app.js` — tasks, notes, quiz, directory, focus timer, and local saving
-- `.github/workflows/deploy.yml` — automatic GitHub Pages deployment
+The repository includes `render.yaml` for a single Render web service. It builds the React client, serves it from Express, connects MongoDB Atlas, and hosts the Socket.IO server on the same origin. Follow [SETUP.md](SETUP.md) to create Atlas and Render accounts and connect the database without putting credentials in GitHub.
+
+GitHub Pages can host only the static React client. It needs the Render API URL configured as the `VITE_API_URL` GitHub Actions variable before Pages can use the shared backend. The current Pages URL remains the local-storage build until that backend URL is available.
+
+## Data and privacy
+
+Passwords are hashed before storage. Tasks, notes, and student-directory entries are scoped to the signed-in account. The quiz leaderboard includes names only for users who opt in. Keep `.env` values and database connection strings out of commits and chat messages.
