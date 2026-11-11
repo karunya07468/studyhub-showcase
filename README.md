@@ -1,35 +1,26 @@
 # StudyHub
 
-StudyHub is a student learning portal showcase based on the StudyHub project theory. It turns the theory's 15 Express, MongoDB and React modules into an editorial-style, responsive site with interactive concept demos.
+StudyHub is a student workspace for keeping everyday study work together. The site opens directly into a working dashboard, with no build step or account setup.
 
-## Explore
+## What you can do
 
-- A student dashboard, task list, quiz, class directory, API route playground, middleware trace, EJS-style feedback form, MongoDB query lab and session simulator.
-- All 15 syllabus modules, including REST APIs, Express routing, middleware, EJS, sessions, MongoDB CRUD and aggregation, React fundamentals, state, forms, Router, hooks, the task app, quiz and dashboard integration.
-- Searchable module details and locally saved completion progress.
-- Light and dark themes, responsive navigation, keyboard-accessible controls and reduced-motion support.
+- Create, edit, complete, filter, and remove study tasks with due dates and priorities.
+- Write and organize notes with autosave and simple heading, bold, and list formatting.
+- Run a 25-minute focus timer and track completed sessions.
+- Take a short interactive study-skills quiz and keep a personal score history.
+- Search a class directory, add classmates, sort by name or CGPA, and remove entries.
+- View progress, recent notes, upcoming tasks, and a weekly activity chart on the dashboard.
+- Change the profile and theme, and export a JSON backup of workspace data.
 
-## Run the showcase
+## Open or publish
 
-Open index.html in a browser. There is no build step or package installation. On GitHub Pages, the static site is published automatically from the main branch by the deployment workflow.
+Open `index.html` in a modern browser to use the app. It uses plain HTML, CSS, and JavaScript, with no installation required. GitHub Actions publishes the repository to GitHub Pages after changes reach the `main` branch.
 
-Demo tasks, directory changes, theme choice and module progress are stored in this browser's local storage. The route console, middleware, EJS and session tools simulate concepts with sample data. They do not connect to a server or database.
+The app saves data in the browser's local storage. It works as a personal workspace on that device, and changes are shared between tabs in the same browser. It does not currently provide sign-in, cloud backup, or collaboration between different people or devices. The class directory starts with fictional sample entries that can be removed or replaced.
 
-## Architecture represented by the theory
+## Files
 
-The source theory describes a separate full-stack application:
-
-- React + Vite single-page client
-- Express + Node API, sessions, middleware and EJS routes
-- MongoDB Atlas accessed through Mongoose
-
-GitHub Pages hosts the static showcase. It does not run the Express or MongoDB services. To run the complete application described in the theory, use the server/ and client/ source folders and configure a MongoDB Atlas URI and session secret. Do not publish real credentials.
-
-## Publish with GitHub Pages
-
-1. Push this folder to a GitHub repository's main branch.
-2. In the repository, open Settings → Pages and select GitHub Actions as the source.
-3. Open Actions and wait for Deploy StudyHub to GitHub Pages to complete.
-4. Visit https://YOUR-USERNAME.github.io/REPOSITORY-NAME/.
-
-Every later push to main will publish the updated site.
+- `index.html` — StudyHub workspace interface
+- `styles.css` — responsive light and dark themes
+- `app.js` — tasks, notes, quiz, directory, focus timer, and local saving
+- `.github/workflows/deploy.yml` — automatic GitHub Pages deployment
