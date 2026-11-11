@@ -123,7 +123,7 @@
   function totalQuizScore() { return state.attempts.length ? Math.round(state.attempts.reduce((sum, item) => sum + item.percent, 0) / state.attempts.length) : null; }
   function taskRow(task, compact = false) {
     const dueClass = task.due && task.due < dateKey(new Date()) && !task.done ? ' overdue' : '';
-    return `<div class="task-item${task.done ? ' completed' : ''}" data-task-row="${escapeHtml(task.id)}"><button class="task-checkbox" data-task-toggle="${escapeHtml(task.id)}" aria-label="Mark ${escapeHtml(task.title)} ${task.done ? 'incomplete' : 'complete'}">${icon('check')}</button><span class="task-title">${escapeHtml(task.title)}</span><span class="task-meta${dueClass}"><i class="priority-dot priority-${escapeHtml(task.priority)}"></i>${compact ? '' : `${escapeHtml(task.priority[0].toUpperCase() + task.priority.slice(1))} · `}${escapeHtml(relativeDate(task.due))}</span></div>`;
+    return `<div class="task-item${task.done ? ' completed' : ''}" data-task-row="${escapeHtml(task.id)}"><button class="task-checkbox" data-task-toggle="${escapeHtml(task.id)}" aria-label="Mark ${escapeHtml(task.title)} ${task.done ? 'incomplete' : 'complete'}">${icon('check')}</button><span class="task-title">${escapeHtml(task.title)}</span><span class="task-meta${dueClass}"><i class="priority-dot priority-${escapeHtml(task.priority)}"></i>${compact ? '' : `${escapeHtml(task.priority[0].toUpperCase() + task.priority.slice(1))} · `}${escapeHtml(relativeDate(task.due))}</span>${compact ? '' : `<span class="task-actions"><button class="row-action" data-task-edit="${escapeHtml(task.id)}" aria-label="Edit ${escapeHtml(task.title)}">${icon('edit')}</button><button class="row-action" data-task-delete="${escapeHtml(task.id)}" aria-label="Delete ${escapeHtml(task.title)}">${icon('trash')}</button></span>`}</div>`;
   }
   function dashboard() {
     const pending = unfinishedCount(); const notes = state.notes.length; const score = totalQuizScore(); const sessions = state.focusSessions.length;
@@ -276,6 +276,15 @@
       const task = state.tasks.find(item => item.id === taskToggle.dataset.taskToggle); if (!task) return;
       task.done = !task.done; task.completedAt = task.done ? dateKey(new Date()) : null; save(); render(); return;
     }
+    const taskDelete = event.target.closest('[data-task-delete]');
+    if (taskDelete) { const task = state.tasks.find(item => item.id === taskDelete.dataset.taskDelete); state.tasks = state.tasks.filter(item => item.id !== taskDelete.dataset.taskDelete); save(); render(); if (task) notify('Task removed.'); return; }
+    const taskEdit = event.target.closest('[data-task-edit]');
+    if (taskEdit) {
+      const task = state.tasks.find(item => item.id === taskEdit.dataset.taskEdit); const row = taskEdit.closest('.task-item'); if (!task || !row) return;
+      row.innerHTML = `<form class="task-edit-form" data-task-edit-form="${escapeHtml(task.id)}"><input class="text-input" name="title" maxlength="100" required value="${escapeHtml(task.title)}" aria-label="Task title"><input class="text-input" name="due" type="date" value="${escapeHtml(task.due || '')}" aria-label="Due date"><select class="select-input" name="priority" aria-label="Priority"><option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option><option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium</option><option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low</option></select><button class="button button-primary" type="submit">Save</button><button class="button button-quiet" type="button" data-task-edit-cancel>Cancel</button></form>`;
+      $('input[name="title"]', row).focus(); return;
+    }
+    if (event.target.closest('[data-task-edit-cancel]')) { render(); return; }
     const filter = event.target.closest('[data-task-filter]');
     if (filter) { taskFilter = filter.dataset.taskFilter; render(); return; }
     const noteSelect = event.target.closest('[data-note-select]');
@@ -317,6 +326,10 @@
     if (event.target.id === 'taskForm') {
       event.preventDefault(); const form = new FormData(event.target); const title = String(form.get('title') || '').trim(); if (!title) return;
       state.tasks.unshift({ id: uid(), title, due: String(form.get('due') || ''), priority: String(form.get('priority') || 'medium'), done: false }); save(); render(); notify('Task added to your list.');
+    }
+    if (event.target.matches('[data-task-edit-form]')) {
+      event.preventDefault(); const task = state.tasks.find(item => item.id === event.target.dataset.taskEditForm); if (!task) return;
+      const form = new FormData(event.target); task.title = String(form.get('title') || '').trim(); task.due = String(form.get('due') || ''); task.priority = String(form.get('priority') || 'medium'); save(); render(); notify('Task updated.');
     }
     if (event.target.id === 'profileForm') {
       event.preventDefault(); state.profile.name = $('#profileName').value.trim() || 'Student'; state.profile.course = $('#profileCourse').value.trim(); save(); $('#profileDialog').close(); render(); notify('Your profile is updated.');
